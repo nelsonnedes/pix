@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dados Bancários e PIX – JN Madeiras</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+      color: #2c3e50;
+    }
+    .dados-bancarios {
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .dados-bancarios p {
+      margin: 6px 0;
+    }
+    .pix-section {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .pix-label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .pix-valor {
+      font-size: 1rem;
+      background-color: #ecf0f1;
+      padding: 8px;
+      border-radius: 4px;
+      word-break: break-all;
+    }
+    .btn-copiar {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 10px 20px;
+      background-color: #27ae60;
+      color: #fff;
+      font-size: 1rem;
+      text-decoration: none;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .btn-copiar:hover {
+      background-color: #1e8449;
+    }
+    .aviso {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .erro {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Dados Bancários</h1>
+      <h1>JN Madeiras</h1>
+    </div>
+    <div class="dados-bancarios">
+      <p><strong>Conta Banco:</strong> Sicredi</p>
+      <p><strong>Código do banco para TED:</strong> 748</p>
+      <p><strong>Agência (AG):</strong> 0804</p>
+      <p><strong>Conta Corrente (CC):</strong> 797441</p>
+      <p><strong>Titular:</strong> JN MADEIRAS</p>
+      <p><strong>CNPJ:</strong> 18.615.107/0001-00</p>
+    </div>
+    <div class="pix-section">
+      <span class="pix-label">PIX:</span>
+      <div id="pixValue" class="pix-valor">jnmadeirasm@hotmail.com</div>
+      <button id="btnCopiar" class="btn-copiar" type="button">Copiar PIX</button>
+      <div id="avisoCopiado" class="aviso" style="display: none;">
+        PIX copiado para a área de transferência!
+      </div>
+      <div id="avisoErro" class="erro" style="display: none;">
+        Não foi possível copiar automaticamente. Segure o texto acima e copie manualmente.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('btnCopiar').addEventListener('click', function () {
+      const pixText = document.getElementById('pixValue').innerText.trim();
+      // Primeiro, tenta usar a API moderna
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(pixText)
+          .then(() => mostrarAvisoSucesso())
+          .catch(() => mostrarAvisoErro());
+      } else {
+        // Fallback: cria um textarea temporário
+        const textarea = document.createElement('textarea');
+        textarea.value = pixText;
+        // Evita que o textarea apareça na página
+        textarea.style.position = 'fixed';
+        textarea.style.top = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        try {
+          const ok = document.execCommand('copy');
+          document.body.removeChild(textarea);
+          if (ok) {
+            mostrarAvisoSucesso();
+          } else {
+            mostrarAvisoErro();
+          }
+        } catch (err) {
+          document.body.removeChild(textarea);
+          mostrarAvisoErro();
+        }
+      }
+    });
+
+    function mostrarAvisoSucesso() {
+      document.getElementById('avisoErro').style.display = 'none';
+      const aviso = document.getElementById('avisoCopiado');
+      aviso.style.display = 'block';
+      setTimeout(() => {
+        aviso.style.display = 'none';
+      }, 2500);
+    }
+
+    function mostrarAvisoErro() {
+      document.getElementById('avisoCopiado').style.display = 'none';
+      const aviso = document.getElementById('avisoErro');
+      aviso.style.display = 'block';
+      setTimeout(() => {
+        aviso.style.display = 'none';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
